@@ -1,4 +1,3 @@
-@"
 # Bosch Intelligent Lighting System: Edge AI Paradigm Testbed
 
 This repository contains the interactive testbed developed for the Bosch Senior Design Capstone Project. It benchmarks and visualizes the architectural differences between an End-to-End Vision-Language-Action (VLA) architecture and a Modular VLM + LLM pipeline for an intelligent, context-aware lighting system.
