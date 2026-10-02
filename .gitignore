@@ -1,0 +1,6 @@
+@"
+__pycache__/
+*.task
+*.pyc
+.vscode/
+"@ | Out-File -FilePath .gitignore -Encoding utf8
