@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 
-# --- DOWNLOAD MEDIAPIPE MODEL ---
+# download mediapipe model
 MODEL_PATH = "hand_landmarker.task"
 MODEL_URL = "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task"
 if not os.path.exists(MODEL_PATH):
@@ -19,11 +19,11 @@ HAND_CONNECTIONS = [(0, 1), (1, 2), (2, 3), (3, 4), (0, 5), (5, 6), (6, 7), (7, 
                     (5, 9), (9, 10), (10, 11), (11, 12), (9, 13), (13, 14), (14, 15), 
                     (15, 16), (13, 17), (0, 17), (17, 18), (18, 19), (19, 20)]
 
-GRID_RES = 100  # 100x100 resolution (10,000 LED nodes)
+GRID_RES = 100  # 100x100 resolution (for testing sake)
 
-# --- HIGH-DENSITY 100x100 LED MATRIX RASTERIZATION ---
+# 100x100 LED matrix rasterization
 def render_skeleton_to_100x100(hand_landmarks_list, color=(0, 255, 120)):
-    """Dynamically projects 3D hand coordinates onto a 100x100 addressable LED matrix."""
+    """projects 3D hand coordinates onto 100x100 addressable LED matrix."""
     matrix = np.zeros((GRID_RES, GRID_RES, 3), dtype=np.uint8)
     
     if not hand_landmarks_list:
@@ -43,7 +43,7 @@ def render_skeleton_to_100x100(hand_landmarks_list, color=(0, 255, 120)):
     return matrix
 
 
-# --- GESTURE CLASSIFIER ---
+# gesture classifier
 def get_finger_states(lms):
     thumb = abs(lms[4].x - lms[9].x) > abs(lms[3].x - lms[9].x)
     index = lms[8].y < lms[6].y
@@ -81,7 +81,7 @@ def get_color_for_gesture(gesture):
     return (0, 230, 255)
 
 
-# --- MAIN APPLICATION DASHBOARD ---
+# main application dashboard
 class LightingApp:
     def __init__(self, root):
         self.root = root
@@ -115,7 +115,7 @@ class LightingApp:
         main_container = ttk.Frame(self.root)
         main_container.pack(fill=tk.BOTH, expand=True, padx=20, pady=15)
 
-        # Left Column (Camera Viewport)
+        # Left column (camera viewport)
         left_frame = ttk.Frame(main_container)
         left_frame.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 20))
         
@@ -134,21 +134,21 @@ class LightingApp:
         self.lbl_status = ttk.Label(left_frame, text="Detected Pose: NONE", font=("Segoe UI", 15, "bold"), foreground="#ffd54f")
         self.lbl_status.pack(anchor=tk.W, pady=15)
 
-        # Right Column (Dual 100x100 LED Grids)
+        # Right column (100x100 LED grids)
         right_frame = ttk.Frame(main_container)
         right_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # USE GRID INSTEAD OF PACK FOR STRICT 50/50 SIZING
+        # using grid instead of pack for 50/50 sizing
         dash_container = ttk.Frame(right_frame)
         dash_container.pack(fill=tk.BOTH, expand=True)
         dash_container.columnconfigure(0, weight=1, uniform="dash")
         dash_container.columnconfigure(1, weight=1, uniform="dash")
         dash_container.rowconfigure(0, weight=1)
 
-        # --- VLA DASHBOARD ---
+        # VLA dashboard
         vla_frame = tk.Frame(dash_container, bg="#1e1e1e", bd=1, relief=tk.SOLID)
         vla_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
-        vla_frame.pack_propagate(False) # Prevents child widgets from resizing the frame
+        vla_frame.pack_propagate(False) # prevents widgets from resizing frame
         
         ttk.Label(vla_frame, text=" End-to-End VLA (Low Latency)", style="Header.TLabel", background="#1e1e1e", foreground="#ffb74d").pack(anchor=tk.W, pady=6)
         ttk.Label(vla_frame, text=" Model: Simlingo / OpenVLA (~2B - 7B Params)\n Target Hardware: NVIDIA Jetson AGX Orin\n Execution: Single-Pass Direct Action Head\n Inference Latency: ~10 - 20 ms", style="Spec.TLabel").pack(anchor=tk.W, padx=6, fill=tk.X)
@@ -160,10 +160,10 @@ class LightingApp:
         self.vla_img_label = tk.Label(vla_frame, bg="#050505", highlightthickness=1, highlightbackground="#ffb74d")
         self.vla_img_label.pack(padx=6, pady=8, fill=tk.BOTH, expand=True)
 
-        # --- MODULAR VLM DASHBOARD ---
+        # modular VLM dashboard
         vlm_frame = tk.Frame(dash_container, bg="#1e1e1e", bd=1, relief=tk.SOLID)
         vlm_frame.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
-        vlm_frame.pack_propagate(False) # Prevents child widgets from resizing the frame
+        vlm_frame.pack_propagate(False) # prevents child widgets from resizing frame
         
         ttk.Label(vlm_frame, text=" Modular VLM + LLM (Decoupled)", style="Header.TLabel", background="#1e1e1e", foreground="#4fc3f7").pack(anchor=tk.W, pady=6)
         ttk.Label(vlm_frame, text=" Model: Decoupled Vision Backbone + Llama-3 / Phi-3\n Target Hardware: Host PC + Co-Processor\n Execution: Vision -> Scene Tokens -> LLM Reasoning\n Pipeline Latency: ~250 - 500 ms (Token Bottleneck)", style="Spec.TLabel").pack(anchor=tk.W, padx=6, fill=tk.X)
